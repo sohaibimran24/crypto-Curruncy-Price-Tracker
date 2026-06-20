@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crypto Tracker — Muhammad Sohaib Imran</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f0f0f;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #1a1a1a;
+      border-bottom: 2px solid #2A9D8F;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      font-size: 28px;
+    }
+
+    .logo-text h1 {
+      font-size: 20px;
+      color: #2A9D8F;
+      font-weight: 700;
+    }
+
+    .logo-text p {
+      font-size: 11px;
+      color: #666;
+      letter-spacing: 1px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .live-badge {
+      background: #1a3a38;
+      border: 1px solid #2A9D8F;
+      color: #2A9D8F;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #2A9D8F;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .last-updated {
+      font-size: 11px;
+      color: #555;
+    }
+
+    /* ── SEARCH & FILTER ── */
+    .controls {
+      padding: 24px 40px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 10px 16px;
+      color: #f0f0f0;
+      font-size: 14px;
+      width: 240px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box:focus { border-color: #2A9D8F; }
+    .search-box::placeholder { color: #444; }
+
+    .currency-select {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 10px 16px;
+      color: #f0f0f0;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .refresh-btn {
+      background: #2A9D8F;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .refresh-btn:hover { background: #238f82; }
+    .refresh-btn:disabled { background: #1a5a54; cursor: not-allowed; }
+
+    /* ── STATS CARDS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      padding: 0 40px 24px;
+    }
+
+    .stat-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #666;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2A9D8F;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    /* ── TABLE ── */
+    .table-container {
+      margin: 0 40px 40px;
+      background: #1a1a1a;
+      border-radius: 16px;
+      border: 1px solid #2a2a2a;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #111;
+    }
+
+    th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 11px;
+      color: #555;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th:hover { color: #2A9D8F; }
+    th.right { text-align: right; }
+
+    tbody tr {
+      border-top: 1px solid #222;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+
+    tbody tr:hover { background: #222; }
+
+    td {
+      padding: 16px 20px;
+      font-size: 14px;
+    }
+
+    td.right { text-align: right; }
+
+    .rank {
+      color: #555;
+      font-size: 13px;
+      width: 40px;
+    }
+
+    .coin-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+
+    .coin-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .coin-symbol {
+      font-size: 11px;
+      color: #555;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .price {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .change {
+      font-weight: 600;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .change.positive {
+      color: #2ecc71;
+      background: #2ecc7115;
+    }
+
+    .change.negative {
+      color: #e74c3c;
+      background: #e74c3c15;
+    }
+
+    .market-cap, .volume {
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    /* Mini sparkline bar */
+    .spark {
+      width: 80px;
+      height: 30px;
+      display: inline-block;
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #555;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #2a2a2a;
+      border-top-color: #2A9D8F;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ERROR ── */
+    .error-box {
+      background: #2a1a1a;
+      border: 1px solid #e74c3c44;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      color: #e74c3c;
+      margin: 20px 40px;
+    }
+
+    /* ── ALERT MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: #1a1a1a;
+      border: 1px solid #2A9D8F44;
+      border-radius: 20px;
+      padding: 32px;
+      width: 360px;
+      max-width: 90vw;
+    }
+
+    .modal h2 {
+      color: #2A9D8F;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    .modal-coin {
+      background: #111;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #f0f0f0;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    .modal input:focus { border-color: #2A9D8F; }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-confirm { background: #2A9D8F; color: white; }
+    .btn-cancel { background: #2a2a2a; color: #aaa; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #333;
+      font-size: 12px;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    footer span { color: #2A9D8F; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      header, .controls, .stats-grid, .table-container { padding-left: 16px; padding-right: 16px; }
+      .table-container { margin: 0 16px 24px; }
+      .stats-grid { padding: 0 16px 16px; }
+      th:nth-child(4), td:nth-child(4),
+      th:nth-child(5), td:nth-child(5),
+      th:nth-child(6), td:nth-child(6) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📈</div>
+      <div class="logo-text">
+        <h1>CryptoTracker</h1>
+        <p>MUHAMMAD SOHAIB IMRAN &nbsp;|&nbsp; FAST-NUCES LAHORE</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        LIVE
+      </div>
+      <div class="last-updated" id="lastUpdated">Fetching data...</div>
+    </div>
+  </header>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <input class="search-box" type="text" id="searchInput" placeholder="🔍 Search cryptocurrency..." oninput="filterCoins()"/>
+    <select class="currency-select" id="currencySelect" onchange="fetchCoins()">
+      <option value="usd">USD ($)</option>
+      <option value="pkr">PKR (₨)</option>
+      <option value="eur">EUR (€)</option>
+      <option value="gbp">GBP (£)</option>
+    </select>
+    <button class="refresh-btn" id="refreshBtn" onclick="fetchCoins()">⟳ Refresh</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card">
+      <div class="stat-label">Top Coin</div>
+      <div class="stat-value" id="statTopCoin">—</div>
+      <div class="stat-sub" id="statTopPrice">Loading...</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Best 24h Performer</div>
+      <div class="stat-value" id="statBest">—</div>
+      <div class="stat-sub" id="statBestChange">Loading...</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Worst 24h Performer</div>
+      <div class="stat-value" id="statWorst">—</div>
+      <div class="stat-sub" id="statWorstChange">Loading...</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Market Cap</div>
+      <div class="stat-value" id="statMarketCap">—</div>
+      <div class="stat-sub">Top 10 combined</div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Coin</th>
+          <th class="right">Price</th>
+          <th class="right">24h Change</th>
+          <th class="right">Market Cap</th>
+          <th class="right">24h Volume</th>
+        </tr>
+      </thead>
+      <tbody id="coinTableBody">
+        <tr>
+          <td colspan="6">
+            <div class="loading">
+              <div class="spinner"></div>
+              <div>Fetching live crypto prices...</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ALERT MODAL -->
+  <div class="modal-overlay" id="alertModal">
+    <div class="modal">
+      <h2>🔔 Set Price Alert</h2>
+      <div class="modal-coin" id="modalCoinInfo"></div>
+      <input type="number" id="alertPrice" placeholder="Enter target price..." step="any"/>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmAlert()">Set Alert</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Built with ❤️ by <span>Muhammad Sohaib Imran</span> &nbsp;|&nbsp;
+    FAST-NUCES, Lahore &nbsp;|&nbsp;
+    Powered by CoinGecko API &nbsp;|&nbsp;
+    Auto-refreshes every 60 seconds
+  </footer>
+
+  <script>
+    let allCoins = [];
+    let selectedCoin = null;
+    let alerts = {};
+    let refreshInterval = null;
+
+    const CURRENCY_SYMBOLS = { usd: '$', pkr: '₨', eur: '€', gbp: '£' };
+
+    function getCurrency() {
+      return document.getElementById('currencySelect').value;
+    }
+
+    function getSymbol() {
+      return CURRENCY_SYMBOLS[getCurrency()];
+    }
+
+    function formatNumber(num) {
+      if (num >= 1_000_000_000_000) return `${getSymbol()}${(num/1e12).toFixed(2)}T`;
+      if (num >= 1_000_000_000)     return `${getSymbol()}${(num/1e9).toFixed(2)}B`;
+      if (num >= 1_000_000)         return `${getSymbol()}${(num/1e6).toFixed(2)}M`;
+      return `${getSymbol()}${num.toLocaleString()}`;
+    }
+
+    function formatPrice(price) {
+      if (price < 0.01)   return `${getSymbol()}${price.toFixed(6)}`;
+      if (price < 1)      return `${getSymbol()}${price.toFixed(4)}`;
+      if (price < 1000)   return `${getSymbol()}${price.toFixed(2)}`;
+      return `${getSymbol()}${price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+    }
+
+    async function fetchCoins() {
+      const btn = document.getElementById('refreshBtn');
+      btn.disabled = true;
+      btn.textContent = '⟳ Loading...';
+
+      try {
+        const currency = getCurrency();
+        const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('API error');
+        allCoins = await res.json();
+        renderTable(allCoins);
+        updateStats(allCoins);
+        document.getElementById('lastUpdated').textContent =
+          `Updated: ${new Date().toLocaleTimeString()}`;
+        checkAlerts(allCoins);
+      } catch (err) {
+        document.getElementById('coinTableBody').innerHTML = `
+          <tr><td colspan="6">
+            <div class="error-box">
+              ❌ Failed to fetch data. Check your internet connection and try again.
+            </div>
+          </td></tr>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '⟳ Refresh';
+      }
+    }
+
+    function renderTable(coins) {
+      const tbody = document.getElementById('coinTableBody');
+      if (!coins.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#555">No coins found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = coins.map((coin, i) => {
+        const change = coin.price_change_percentage_24h || 0;
+        const changeClass = change >= 0 ? 'positive' : 'negative';
+        const changeArrow = change >= 0 ? '▲' : '▼';
+
+        return `
+          <tr onclick="openModal(${i})">
+            <td class="rank">${coin.market_cap_rank}</td>
+            <td>
+              <div class="coin-info">
+                <img class="coin-icon" src="${coin.image}" alt="${coin.name}" loading="lazy"/>
+                <div>
+                  <div class="coin-name">${coin.name}</div>
+                  <div class="coin-symbol">${coin.symbol}</div>
+                </div>
+              </div>
+            </td>
+            <td class="right"><div class="price">${formatPrice(coin.current_price)}</div></td>
+            <td class="right">
+              <span class="change ${changeClass}">${changeArrow} ${Math.abs(change).toFixed(2)}%</span>
+            </td>
+            <td class="right"><div class="market-cap">${formatNumber(coin.market_cap)}</div></td>
+            <td class="right"><div class="volume">${formatNumber(coin.total_volume)}</div></td>
+          </tr>`;
+      }).join('');
+    }
+
+    function updateStats(coins) {
+      if (!coins.length) return;
+
+      const top = coins[0];
+      document.getElementById('statTopCoin').textContent = top.name;
+      document.getElementById('statTopPrice').textContent = formatPrice(top.current_price);
+
+      const sorted = [...coins].sort((a,b) =>
+        (b.price_change_percentage_24h||0) - (a.price_change_percentage_24h||0));
+
+      const best = sorted[0];
+      const worst = sorted[sorted.length - 1];
+
+      document.getElementById('statBest').textContent = best.symbol.toUpperCase();
+      document.getElementById('statBestChange').textContent =
+        `+${(best.price_change_percentage_24h||0).toFixed(2)}%`;
+
+      document.getElementById('statWorst').textContent = worst.symbol.toUpperCase();
+      document.getElementById('statWorstChange').textContent =
+        `${(worst.price_change_percentage_24h||0).toFixed(2)}%`;
+
+      const totalMcap = coins.reduce((sum, c) => sum + (c.market_cap||0), 0);
+      document.getElementById('statMarketCap').textContent = formatNumber(totalMcap);
+    }
+
+    function filterCoins() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = allCoins.filter(c =>
+        c.name.toLowerCase().includes(query) ||
+        c.symbol.toLowerCase().includes(query)
+      );
+      renderTable(filtered);
+    }
+
+    function openModal(index) {
+      selectedCoin = allCoins[index];
+      document.getElementById('modalCoinInfo').innerHTML = `
+        <img src="${selectedCoin.image}" style="width:36px;height:36px;border-radius:50%"/>
+        <div>
+          <div style="font-weight:600">${selectedCoin.name} (${selectedCoin.symbol.toUpperCase()})</div>
+          <div style="color:#2A9D8F;font-size:13px">Current: ${formatPrice(selectedCoin.current_price)}</div>
+        </div>`;
+      document.getElementById('alertPrice').value = '';
+      document.getElementById('alertModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('alertModal').classList.remove('active');
+      selectedCoin = null;
+    }
+
+    function confirmAlert() {
+      const price = parseFloat(document.getElementById('alertPrice').value);
+      if (!price || price <= 0) {
+        alert('Please enter a valid target price!');
+        return;
+      }
+      alerts[selectedCoin.id] = {
+        coin: selectedCoin,
+        target: price,
+        direction: price > selectedCoin.current_price ? 'above' : 'below'
+      };
+      alert(`✅ Alert set! You'll be notified when ${selectedCoin.name} goes ${alerts[selectedCoin.id].direction} ${formatPrice(price)}`);
+      closeModal();
+    }
+
+    function checkAlerts(coins) {
+      coins.forEach(coin => {
+        if (alerts[coin.id]) {
+          const alert = alerts[coin.id];
+          const hit = (alert.direction === 'above' && coin.current_price >= alert.target) ||
+                      (alert.direction === 'below' && coin.current_price <= alert.target);
+          if (hit) {
+            window.alert(`🚨 PRICE ALERT!\n${coin.name} has reached ${formatPrice(coin.current_price)}!\nYour target was ${formatPrice(alert.target)}`);
+            delete alerts[coin.id];
+          }
+        }
+      });
+    }
+
+    // Close modal on overlay click
+    document.getElementById('alertModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // Auto refresh every 60 seconds
+    function startAutoRefresh() {
+      if (refreshInterval) clearInterval(refreshInterval);
+      refreshInterval = setInterval(fetchCoins, 60000);
+    }
+
+    // Init
+    fetchCoins();
+    startAutoRefresh();
+  </script>
+</body>
+</html>
