@@ -17,6 +17,12 @@ Fetches live crypto prices, shows price changes, market caps, and volume data fo
 - Python 3
 - Requests library
 - CoinGecko API (Free)
+-  Requests library
+- CoinGecko Free API (no API key required)
+
+##  Installation
+pip install requests
+python crypto_price_tracker.py
 
 ##  Author
 **Muhammad Sohaib Imran**
